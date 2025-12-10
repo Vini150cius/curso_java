@@ -183,3 +183,170 @@ import entities.Triangle;
 				x = new Triangle();
 				y = new Triangle();
 ```
+
+## Constantes
+
+Constantes são variáveis que não podem ter seu valor alterado durante a execução do programa. Em Java, as constantes são declaradas utilizando a palavra-chave `final` e geralmente são escritas em letras maiúsculas com palavras separadas por underscores `_`.
+
+```Java
+public static final double PI = 3.14159;
+```
+
+## Metodos Estáticos
+
+Métodos estáticos pertencem à classe em si, e não a uma instância específica da classe. Eles podem ser chamados sem a necessidade de criar um objeto da classe.
+
+Ou seja, são funções que estão no mesmo arquivo da classe principal e podem ser chamadas diretamente.
+
+```Java
+ public class Program {
+	public static final double PI= 3.14159;
+
+	public static void main (String[] args) {
+		double c = circumference(radius);
+		double v = volume(radius);
+	}
+
+	public static double circumference(double radius) {
+		return 2.0 * PI * radius;
+	}
+
+	public static double volume(double radius) {
+		return 4.0 * PI * radius * radius * radius / 3.0;
+	}
+ }
+```
+
+Tambem é possível chamar métodos estáticos de outras classes, mas diferente de metodos de instância, não é necessário criar um objeto da classe para chamar o método estático.
+
+```Java
+ double result = Calculator.volume(25.0);
+```
+
+## Construtores
+
+Construtores são métodos especiais usados para inicializar objetos de uma classe. Eles têm o mesmo nome da classe.
+
+```Java
+public class Product {
+
+    public String name;
+    public double price;
+    public int quantity;
+
+    public Product(String name, double price, int quantity) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+}
+```
+
+## Sobrecarga de Construtores
+
+A sobrecarga de construtores permite que uma classe tenha múltiplos construtores com diferentes listas de parâmetros. Isso possibilita a criação de objetos de maneiras diferentes, dependendo dos dados disponíveis no momento da instânciação.
+Tambem podemos ter um construtor padrão (sem parâmetros).
+
+## Encapsulamento
+
+Encapsulamento é a restrição do acesso direto aos dados de um objeto, tendo que utilizar métodos específicos para acessar e modificar esses dados (getters e setters).
+Primeiro temos que definir os atributos como private e depois criar os métodos `get` e `set`.
+
+```Java
+public class Product {
+		private String name;
+ 
+		public String getName() {
+				return name;
+		}
+
+		public void setName(String name) {
+				this.name = name;
+		}
+}
+```
+
+## Gerando Construtores, Getters e Setters Automaticamente no IntelliJ
+
+1. Clique com o botão direito dentro da classe onde você deseja gerar o construtor, getters e setters.
+2. Selecione "Generate..." ou pressione `Alt + Insert`.
+3. Escolha "Constructor" para gerar o construtor, "Getter" para gerar os getters, ou "Setter" para gerar os setters.
+4. Selecione os atributos que você deseja incluir e clique em "OK".
+
+## Modificadores de Acesso
+
+private = acessível apenas dentro da própria classe.
+(nada) = acessível dentro do mesmo pacote.
+protected = acessível dentro do mesmo pacote e em subclasses.
+public = acessível de qualquer lugar.
+
+## Classes não tem valor
+
+Variaveis do tipo classe armazenam referências para objetos na memória, e não os próprios objetos.
+![exemplo](imagensReadme/image2.png)
+
+![Tipos referencia vs tipo valor](imagensReadme/image3.png)
+
+## Vetores
+
+### Arranjo (array) é uma estrutura de dados
+
+Homogênea (dados do mesmo tipo)
+Ordenada (elementos acessados por meio de posições)
+ Alocada de uma vez só, em um bloco contíguo de memória
+
+### Vantagens
+
+ Acesso imediato aos elementos pela sua posição
+
+### Desvantagens
+
+ Tamanho fixo
+ Dificuldade para se realizar inserções e deleções.
+
+### Estrutura de criação de um vetor
+
+```Java
+tipo[] nomeDoVetor = new tipo[tamanho];
+```
+
+```Java
+double[] nomeDoVetor = new double[10];
+```
+
+### Inserindo valores em um vetor
+
+No exemplo abaixo, o usuário informa o tamanho do vetor e depois insere os valores, utilizando de um `for` para percorrer o vetor e inserir os valores.
+
+```Java
+int n =sc.nextInt();
+double[] vect = new double[n];  
+  for (int i=0; i<n; i++){
+    vect[i] = sc.nextDouble();
+  }
+```
+
+### Criação de um vetor numa classe
+
+```Java
+public class Product {
+
+    private String name;
+    private double price;
+}
+```
+
+```Java
+        Locale.setDefault(Locale.US);
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        Product[] vect = new Product[n];
+
+        for (int i = 0; i < vect.length; i++){
+            sc.nextLine();
+            String name = sc.nextLine();
+            double price = sc.nextDouble();
+            vect[i] = new Product(price, name);
+        }
+```
