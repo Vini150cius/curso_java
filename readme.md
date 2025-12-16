@@ -350,3 +350,157 @@ public class Product {
             vect[i] = new Product(price, name);
         }
 ```
+
+### Boxing e Unboxing
+
+Boxing é o processo de converter um tipo primitivo em um objeto do tipo referência correspondente. Unboxing é o processo inverso, onde um objeto do tipo referência é convertido de volta para um tipo primitivo.
+
+```Java
+int x = 10; // tipo primitivo
+Object obj = x; // Boxing
+int y = (int) obj; // Unboxing
+```
+
+### Wrappers
+
+Wrappers são classes que encapsulam tipos primitivos em objetos. Cada tipo primitivo em Java tem uma classe wrapper correspondente. Assim, não é preciso fazer boxing e unboxing manualmente, pois o Java faz isso automaticamente.
+A vantagem de usar wrappers é que eles permitem que sejam nulos.
+
+| Tipo Primitivo | Classe Wrapper |
+|----------------|----------------|
+| int            | Integer        |
+| double         | Double         |
+| boolean        | Boolean        |
+| char           | Character      |
+| long           | Long           |
+| float          | Float          |
+| byte           | Byte           |
+| short          | Short          |
+
+```Java
+int x = 10; // tipo primitivo
+Interger obj = x; // Boxing
+int y = obj; // Unboxing
+```
+
+## Laços For Each
+
+O laço for each é uma forma simplificada de percorrer elementos em arrays ou coleções.
+
+```Java
+for (tipo item : coleção) {
+		// bloco de comandos
+}
+```
+
+```Java
+String[] vect = new String[] {"Ana", "Bruno", "Carlos"};
+for (String nome : vect) {
+		System.out.println(nome);
+}
+```
+
+## Listas
+
+### Lista é uma estrutura de dados
+
+• Homogênea (dados do mesmo tipo)
+• Ordenada (elementos acessados por meio de posições)
+• Inicia vazia, e seus elementos são alocados sob demanda
+• Cada elemento ocupa um "nó" (ou nodo) da lista
+
+• Tipo (interface): List
+• Classes que implementam: ArrayList, LinkedList, etc.
+
+### Vantagens
+
+• Tamanho variável
+• Facilidade para se realizar inserções e deleções
+
+### Desvantagens
+
+• Acesso sequencial aos elementos*.
+
+### Estrutura de criação de uma lista
+
+```Java
+List<tipo> nomeDaLista = new ArrayList<>();
+```
+
+### Comandos básicos para listas
+
+```Java
+nomeDaLista.add(elemento); // Adiciona um elemento no final da lista
+nomeDaLista.add(indice, elemento); // Adiciona um elemento em uma posição específica
+nomeDaLista.size(); // Retorna o tamanho da lista
+nomeDaLista.remove(indice); // Remove o elemento de uma posição específica
+nomeDaLista.remove(elemento); // Remove a primeira ocorrência do elemento
+nomeDaLista.removeIf(x -> condição); // Remove todos os elementos que satisfazem a condição
+nomeDaLista.indexOf(elemento); // Retorna o índice da primeira ocorrência do elemento
+List<tipo> subLista = nomeDaLista.stream().filter(x -> condição).collect(Collectors.toList()); // Cria uma sublista com elementos que satisfazem a condição
+```
+
+## Matriz 
+Em programação, "matriz" é o nome dado a arranjos bidimensionais
+
+### Arranjo (array) é uma estrutura de dados
+
+• Homogênea (dados do mesmo tipo)
+• Ordenada (elementos acessados por meio de posições)
+• Alocada de uma vez só, em um bloco contíguo de memória
+
+### Vantagens
+
+• Acesso imediato aos elementos pela sua posição
+
+### Desvantagens
+
+• Tamanho fixo
+• Dificuldade para se realizar inserções e deleções
+
+### Estrutura de criação de uma matriz
+
+```Java
+// Bidimensional
+tipo[][] nomeDaMatriz = new tipo[linhas][colunas];
+
+// Tridimensional
+tipo[][][] nomeDaMatriz = new tipo[linhas][colunas]; 
+```
+
+## Datas e Horas
+
+### Data-[hora] local
+
+ano-mês-dia-[hora] sem fuso horário
+[hora] opcional
+
+### Data-hora global
+
+ano-mês-dia-hora com fuso horário
+
+### Duração
+
+tempo decorrido entre duas data-hora.
+
+## Definição de Data-Hora
+
+```Java
+LocalDate d01 = LocalDate.now(); // Data atual
+LocalDateTime d02 = LocalDateTime.now(); // Data e hora atual
+Instant d03 = Instant.now(); // Data e hora atual em UTC
+
+LocalDate d04 = LocalDate.parse("2024-06-25"); // Data a partir de uma string
+LocalDateTime d05 = LocalDateTime.parse("2024-06-25T15:30:45"); // Data e hora a partir de uma string
+Instant d06 = Instant.parse("2024-06-25T15:30:45Z"); // Data e hora em UTC a partir de uma string
+Instant d06 = Instant.parse("2024-06-25T15:30:45-03:00"); // Data e hora em UTC a partir de uma string no fuso de São Paulo
+```
+
+### Formatação de Data-Hora
+
+[Documentação do DateTimeFormatter](https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html)
+
+```Java
+DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+LocalDate d04 = LocalDate.parse("25/06/2024", fmt1); // Data a partir de uma string num formato específico
+```
