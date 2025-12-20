@@ -504,3 +504,79 @@ Instant d06 = Instant.parse("2024-06-25T15:30:45-03:00"); // Data e hora em UTC 
 DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 LocalDate d04 = LocalDate.parse("25/06/2024", fmt1); // Data a partir de uma string num formato específico
 ```
+
+### Formatação de Data-Hora para saída
+
+```Java
+DateTimeFormatter fmt2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+DateTimeFormatter fmt3 = DateTimeFormatter.ofPattern("dd/MM/yyyy").withLocale(ZoneId.systemDefault()); // Formatação de data para string com localidade
+DateTimeFormatter fmt4 = DateTimeFormatter.ISO_DATE;
+ // Formatação de data e hora para string
+String s1 = d04.format(fmt2); // Formatação de data para string
+System.out.println(d04.format(fmt3)); // Formatação de data para string
+String s1 = d04.format(fmt4); // Formatação de data para string
+// ou
+String s2 = fmt2.format(d04); // Formatação de data para string
+
+LocalDate r2 = LocalDate.ofInstant(d06, ZoneId.of("Portugal")); // Converter Instant para LocalDate no fuso local
+d04.getDayOfMonth(); // Obter o dia do mês
+d04.getMonthValue(); // Obter o mês
+d04.getYear(); // Obter o ano
+d04.getHour(); // Obter a hora
+d04.getMinute(); // Obter os minutos
+
+```
+
+### Operações com Data-Hora
+
+```Java
+d04.plusDays(7); // Adicionar 7 dias
+d04.plusMonths(6); // Adicionar 6 meses
+
+d04.minusDays(7); // Subtrair 7 dias
+d04.minusMonths(6); // Subtrair 6 meses
+d04.until(d07, ChronoUnit.DAYS); // Diferença em dias entre d04 e d07
+Duration.between(d06, d08).toDays(); // Diferença em dias entre
+Duration.between(d06, d08).toHours(); // Diferença em horas entre
+Duration.between(d06, d08).toMinutes(); // Diferença em minutos entre
+
+Duration t1 = Duration.between(d06.atTime(0, 0), d08.atTime(0, 0)); // Diferença entre duas datas
+Duration t1 = Duration.between(d06.atStartOfDay(), d08.atStartOfDay()); // Diferença entre duas datas
+sout.println("Diferença em dias: " + t1.toDays());
+```
+
+## Enumerações
+
+[Documentação sobre Enumeração](https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html)
+
+•É um tipo especial que serve para especificar de forma literal um conjunto de constantes relacionadas
+•Palavra chave em Java: enum
+•Vantagem: melhor semântica, código mais legível e auxiliado pelo compilador
+
+Ou seja, é um tipo que cria um tipo que você.
+
+```Java
+public enum OrderStatus {
+	PENDING_PAYMENT,
+	PROCESSING,
+	SHIPPED,
+	DELIVERED
+}
+```
+
+E essas enumerações ficam em um pacote separado, geralmente chamado de `entities.enums`.
+Os exercicios  15 e 16 do curso Java Completo da Udemy utilizam enumerações.
+
+## StringBuilder
+
+StringBuilder é uma classe em Java que permite criar e manipular strings de forma mais eficiente do que a classe String tradicional, especialmente quando se trata de operações que envolvem muitas concatenações ou modificações de strings.
+
+```Java
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(title + "\n");
+        return sb.toString();
+    }
+```
+
+O StringBuilder tem que ser declarado dentro do método que vai ser utilizado, e no final do método é necessário retornar o StringBuilder convertido para String com o método `toString()`.
