@@ -255,7 +255,7 @@ Primeiro temos que definir os atributos como private e depois criar os métodos 
 ```Java
 public class Product {
 		private String name;
- 
+
 		public String getName() {
 				return name;
 		}
@@ -293,16 +293,16 @@ Variaveis do tipo classe armazenam referências para objetos na memória, e não
 
 Homogênea (dados do mesmo tipo)
 Ordenada (elementos acessados por meio de posições)
- Alocada de uma vez só, em um bloco contíguo de memória
+Alocada de uma vez só, em um bloco contíguo de memória
 
 ### Vantagens
 
- Acesso imediato aos elementos pela sua posição
+Acesso imediato aos elementos pela sua posição
 
 ### Desvantagens
 
- Tamanho fixo
- Dificuldade para se realizar inserções e deleções.
+Tamanho fixo
+Dificuldade para se realizar inserções e deleções.
 
 ### Estrutura de criação de um vetor
 
@@ -320,7 +320,7 @@ No exemplo abaixo, o usuário informa o tamanho do vetor e depois insere os valo
 
 ```Java
 int n =sc.nextInt();
-double[] vect = new double[n];  
+double[] vect = new double[n];
   for (int i=0; i<n; i++){
     vect[i] = sc.nextDouble();
   }
@@ -367,7 +367,7 @@ Wrappers são classes que encapsulam tipos primitivos em objetos. Cada tipo prim
 A vantagem de usar wrappers é que eles permitem que sejam nulos.
 
 | Tipo Primitivo | Classe Wrapper |
-|----------------|----------------|
+| -------------- | -------------- |
 | int            | Integer        |
 | double         | Double         |
 | boolean        | Boolean        |
@@ -419,7 +419,7 @@ for (String nome : vect) {
 
 ### Desvantagens
 
-• Acesso sequencial aos elementos*.
+• Acesso sequencial aos elementos\*.
 
 ### Estrutura de criação de uma lista
 
@@ -440,7 +440,8 @@ nomeDaLista.indexOf(elemento); // Retorna o índice da primeira ocorrência do e
 List<tipo> subLista = nomeDaLista.stream().filter(x -> condição).collect(Collectors.toList()); // Cria uma sublista com elementos que satisfazem a condição
 ```
 
-## Matriz 
+## Matriz
+
 Em programação, "matriz" é o nome dado a arranjos bidimensionais
 
 ### Arranjo (array) é uma estrutura de dados
@@ -465,7 +466,7 @@ Em programação, "matriz" é o nome dado a arranjos bidimensionais
 tipo[][] nomeDaMatriz = new tipo[linhas][colunas];
 
 // Tridimensional
-tipo[][][] nomeDaMatriz = new tipo[linhas][colunas]; 
+tipo[][][] nomeDaMatriz = new tipo[linhas][colunas];
 ```
 
 ## Datas e Horas
@@ -565,7 +566,7 @@ public enum OrderStatus {
 ```
 
 E essas enumerações ficam em um pacote separado, geralmente chamado de `entities.enums`.
-Os exercicios  15 e 16 do curso Java Completo da Udemy utilizam enumerações.
+Os exercicios 15 e 16 do curso Java Completo da Udemy utilizam enumerações.
 
 ## StringBuilder
 
@@ -580,3 +581,106 @@ StringBuilder é uma classe em Java que permite criar e manipular strings de for
 ```
 
 O StringBuilder tem que ser declarado dentro do método que vai ser utilizado, e no final do método é necessário retornar o StringBuilder convertido para String com o método `toString()`.
+
+## Herança
+
+Herança permite que uma classe (subclasse ou classe derivada) herde atributos e métodos de outra classe (superclasse ou classe base).
+A palavra-chave `extends` é usada para indicar que uma classe herda de outra.
+A classe base não tem nenhuma mudança, já na classe derivada, precisamos usar a palavra-chave `extends` seguida do nome da classe base e tambem o construtor da classe derivada deve chamar o construtor da classe base usando a palavra-chave `super`.
+
+```Java
+public class BusinessAccount extends Account {
+    private Double loanLimit;
+
+    public BusinessAccount() {
+        super();
+    }
+
+    public BusinessAccount(Integer number, String holder, Double balance, Double loanLimit) {
+        super(number, holder, balance);
+        this.loanLimit = loanLimit;
+    }
+}
+```
+
+## Upcasting e Downcasting
+
+Upcasting é o processo de converter uma referência de um objeto de uma subclasse para uma superclasse. Downcasting é o processo inverso, onde uma referência de um objeto de uma superclasse é convertida para uma subclasse.
+
+Upcasting:
+
+```Java
+Account acc1 = bacc;
+Account acc2 = new BusinessAccount(1003, "Bob", 0.0, 200.0);
+Account acc3 = new SavingsAccount(1004, "Ana", 0.0, 0.01);
+```
+
+Downcasting:
+
+```Java
+BusinessAccount acc4 = (BusinessAccount) acc2;
+
+        // Errado, mas só aparece o erro na hora de compilar
+        // BusinessAccount acc5 = (BusinessAccount) acc3;
+
+        if (acc3 instanceof BusinessAccount) {
+            BusinessAccount acc5 = (BusinessAccount) acc3;
+            acc5.loan(200.0);
+        }
+```
+
+O operador `instanceof` é usado para verificar se um objeto é uma instância de uma classe específica antes de fazer o downcasting, evitando erros na execução.
+
+## Sobrescrita de Métodos
+
+É a implementação de um método em uma subclasse que já foi definido na superclasse.
+É recomendado usar a anotação `@Override` acima do método sobrescrito para indicar que você está intencionalmente sobrescrevendo um método da superclasse.
+
+```Java
+    @Override
+    public void withdraw(Double amount) {
+        balance -= amount;
+    }
+```
+
+## Final
+
+A palavra-chave `final` em Java impede que uma classe seja herdada ou que um método seja sobrescrito.
+O `final` pode ser usado em classes e métodos, e ele tende a deixar o código mais seguro e otimizado.
+
+```Java
+public final class MathUtils {
+		// Esta classe não pode ser estendida
+}
+```
+
+```Java
+public class BaseClass {
+		public final void display() {
+				System.out.println("Este método não pode ser sobrescrito.");
+		}
+}
+```
+
+## Polimorfismo
+
+Polimorfismo nada mais é do que um método ter o mesmo nome, mas comportamentos diferentes dependendo do objeto que o chama. Então quando um método é sobrescrito em uma subclasse, o comportamento do método pode variar dependendo do tipo do objeto que o chama.
+
+## Classes Abstratas
+
+São classes que não podem ser usadas diretamente, elas só servem como base para outras classes.
+Pode também servir para tipos de listas genéricas, onde a lista pode armazenar objetos de diferentes subclasses que herdam da classe abstrata.
+
+```Java
+public abstract class Animal {}
+```
+
+## Métodos Abstratos
+
+Igual as classes abstratas, os métodos abstratos não possuem implementação na classe base, e devem ser implementados nas subclasses.
+Serve para metodos que são muito específicos de cada subclasse ou algo muito genérico que todas as subclasses devem implementar. E se o método for abstrato, a classe que o contém também deve ser abstrata.
+O método abstrato se torna obrigatório para todas as subclasses implementarem, tendo que ser sobrescrito.
+
+```Java
+    public abstract void makeSound();
+```
