@@ -52,16 +52,16 @@ O casting seria como se fosse o parse no C#.
 Para ler dados do usuário em Java, utilizamos a classe Scanner.
 
 ```Java
-import java.util.Scanner;
-public class Main {
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		String x;
-		x = sc.next();
-		System.out.println("Você digitou: " + x);
-		sc.close();
-	}
-}
+    import java.util.Scanner;
+    public class Main {
+        public static void main(String[] args) {
+            Scanner sc = new Scanner(System.in);
+            String x;
+            x = sc.next();
+            System.out.println("Você digitou: " + x);
+            sc.close();
+        }
+    }
 ```
 
 Para ler do tipo int:
@@ -75,14 +75,14 @@ Para ler do tipo double:
 
 ```Java
 double x;
-		x = sc.nextDouble();
+x = sc.nextDouble();
 ```
 
 Para ler dados da linha inteira :
 
 ```Java
 string x;
-		x = sc.nextLine();
+x = sc.nextLine();
 ```
 
 ### Operações Matemáticas
@@ -168,20 +168,20 @@ Na pasta entities é criada a classe com os atributos e métodos. Na pasta appli
 ```Java
 package entities;
 
-public class Triangle {
-		public double a;
-		public double b;
-		public double c;
-}
+    public class Triangle {
+            public double a;
+            public double b;
+            public double c;
+    }
 ```
 
 ```Java
 package application;
 
-import entities.Triangle;
-				Triangle x, y;
-				x = new Triangle();
-				y = new Triangle();
+    import entities.Triangle;
+                    Triangle x, y;
+                    x = new Triangle();
+                    y = new Triangle();
 ```
 
 ## Constantes
@@ -199,22 +199,22 @@ Métodos estáticos pertencem à classe em si, e não a uma instância específi
 Ou seja, são funções que estão no mesmo arquivo da classe principal e podem ser chamadas diretamente.
 
 ```Java
- public class Program {
-	public static final double PI= 3.14159;
+    public class Program {
+        public static final double PI= 3.14159;
 
-	public static void main (String[] args) {
-		double c = circumference(radius);
-		double v = volume(radius);
-	}
+        public static void main (String[] args) {
+            double c = circumference(radius);
+            double v = volume(radius);
+        }
 
-	public static double circumference(double radius) {
-		return 2.0 * PI * radius;
-	}
+        public static double circumference(double radius) {
+            return 2.0 * PI * radius;
+        }
 
-	public static double volume(double radius) {
-		return 4.0 * PI * radius * radius * radius / 3.0;
-	}
- }
+        public static double volume(double radius) {
+            return 4.0 * PI * radius * radius * radius / 3.0;
+        }
+    }
 ```
 
 Tambem é possível chamar métodos estáticos de outras classes, mas diferente de metodos de instância, não é necessário criar um objeto da classe para chamar o método estático.
@@ -253,17 +253,17 @@ Encapsulamento é a restrição do acesso direto aos dados de um objeto, tendo q
 Primeiro temos que definir os atributos como private e depois criar os métodos `get` e `set`.
 
 ```Java
-public class Product {
-		private String name;
+    public class Product {
+            private String name;
 
-		public String getName() {
-				return name;
-		}
+            public String getName() {
+                    return name;
+            }
 
-		public void setName(String name) {
-				this.name = name;
-		}
-}
+            public void setName(String name) {
+                    this.name = name;
+            }
+    }
 ```
 
 ## Gerando Construtores, Getters e Setters Automaticamente no IntelliJ
@@ -388,16 +388,16 @@ int y = obj; // Unboxing
 O laço for each é uma forma simplificada de percorrer elementos em arrays ou coleções.
 
 ```Java
-for (tipo item : coleção) {
-		// bloco de comandos
-}
+    for (tipo item : coleção) {
+            // bloco de comandos
+    }
 ```
 
 ```Java
 String[] vect = new String[] {"Ana", "Bruno", "Carlos"};
-for (String nome : vect) {
-		System.out.println(nome);
-}
+    for (String nome : vect) {
+            System.out.println(nome);
+    }
 ```
 
 ## Listas
@@ -557,12 +557,12 @@ sout.println("Diferença em dias: " + t1.toDays());
 Ou seja, é um tipo que cria um tipo que você.
 
 ```Java
-public enum OrderStatus {
-	PENDING_PAYMENT,
-	PROCESSING,
-	SHIPPED,
-	DELIVERED
-}
+    public enum OrderStatus {
+        PENDING_PAYMENT,
+        PROCESSING,
+        SHIPPED,
+        DELIVERED
+    }
 ```
 
 E essas enumerações ficam em um pacote separado, geralmente chamado de `entities.enums`.
@@ -650,16 +650,16 @@ O `final` pode ser usado em classes e métodos, e ele tende a deixar o código m
 
 ```Java
 public final class MathUtils {
-		// Esta classe não pode ser estendida
+// Esta classe não pode ser estendida
 }
 ```
 
 ```Java
-public class BaseClass {
-		public final void display() {
-				System.out.println("Este método não pode ser sobrescrito.");
-		}
-}
+    public class BaseClass {
+            public final void display() {
+                    System.out.println("Este método não pode ser sobrescrito.");
+            }
+    }
 ```
 
 ## Polimorfismo
@@ -683,4 +683,214 @@ O método abstrato se torna obrigatório para todas as subclasses implementarem,
 
 ```Java
     public abstract void makeSound();
+```
+
+## Estrutura try-catch
+
+A estrutura try-catch é usada para tratar exceções em Java. O código que pode gerar uma exceção é colocado dentro do bloco `try`, e o tratamento da exceção é feito no bloco `catch`.
+
+```Java
+try {
+    // código que pode gerar uma exceção
+} catch (TipoDaExceção e) {
+    // tratamento da exceção
+}
+```
+
+### Exemplo de uso do try-catch
+
+```Java
+try{
+    String[] vect = sc.nextLine().split(" ");
+    int position = sc.nextInt();
+    System.out.println(vect[position]);
+} catch (ArrayIndexOutOfBoundsException e) {
+    System.out.println("Invalid position! ");
+}
+catch (InputMismatchException e) {
+    System.out.println("Input error! ");
+}
+```
+
+## Estrutura de arquivos sugerida
+
+```Java
+model
+  entities
+  enums
+  exceptions
+  services
+```
+
+## Throws Exception
+
+Colocar o `throws Exception` na assinatura do método indica que o método pode lançar uma exceção, e que o chamador do método deve estar preparado para lidar com essa exceção. Ou seja, o método não trata a exceção internamente, mas sim propaga a responsabilidade de tratamento para o código que o chamou.
+
+## throw new
+
+Quando você está desenvolvendo um método e quer indicar que uma condição específica é um erro, você pode usar a instrução `throw new` para lançar uma exceção personalizada. Isso permite que você crie suas próprias exceções para situações específicas no seu código.
+
+```Java
+if (amount <= 0) {
+    throw new IllegalArgumentException("Amount must be positive");
+}
+```
+
+Assim você pode tratar essa exceção no método que chamou esse método, utilizando o try-catch.
+
+Construtores também podem lançar exceções utilizando o `throw new`, caso alguma condição não seja atendida durante a criação do objeto.
+
+```Java
+public Product(String name, double price) {
+    if (price < 0) {
+        throw new IllegalArgumentException("Price cannot be negative");
+    }
+    this.name = name;
+    this.price = price;
+}
+```
+
+## Exceções Personalizadas
+
+Você pode criar suas próprias classes de exceção personalizadas em Java, estendendo a classe `Exception` ou `RuntimeException`. Isso é útil quando você deseja representar erros específicos do seu domínio de aplicação.
+
+```Java
+    public class DomainException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+
+        public DomainException(String msg) {
+            super(msg);
+        }
+    }
+```
+
+Depois você pode lançar essa exceção personalizada em qualquer lugar do seu código usando a instrução `throw new DomainException("mensagem de erro")`.
+
+## Lendo arquivos
+
+Para ler arquivos você pode usar o Scanner. O arquivo deve ser importado com o caminho completo em uma variavel do tipo File.
+
+```Java
+    File file = new File("C:\\temp\\files\\aa.txt");
+        Scanner sc = null;
+        try {
+            sc = new Scanner(file);
+            while (sc.hasNextLine()) {
+                System.out.println(sc.nextLine());
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
+        } finally {
+            if (sc != null) {
+
+                sc.close();
+            }
+        }
+```
+
+## FileReader e BufferedReader
+
+O FileReader é usado para ler caracteres de um arquivo, enquanto o BufferedReader é usado para ler texto de forma eficiente, armazenando os caracteres em um buffer.
+
+```Java
+String path = "C:\\temp\\files\\aa.txt";
+        FileReader fr = null;
+        BufferedReader br = null;
+
+        try{
+            fr = new FileReader(path);
+            br = new BufferedReader(fr);
+            // br = new BufferedReader(new FileReader(path));
+
+            String line = br.readLine();
+            while(line != null){
+                System.out.println(line);
+                line = br.readLine();
+            }
+        }
+        catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+        finally{
+            try {
+                if(br != null){
+                    br.close();
+                }
+                if(fr != null){
+                    fr.close();
+                }
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+
+        }
+```
+
+## FileWriter e BufferedWriter
+
+O FileWriter é usado para escrever caracteres em um arquivo, enquanto o BufferedWriter é usado para escrever texto de forma eficiente, armazenando os caracteres em um buffer antes de escrevê-los no arquivo.
+
+```Java
+        String[] lines = new String[]{"Good morning", "Good afternoon", "Good evening"};
+        String path = "C:\\temp\\files\\out.txt";
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
+            for (String line : lines) {
+                bw.write(line); // Escreve a linha no arquivo
+                bw.newLine(); // Adiciona uma nova linha / quebra de linha
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+```
+
+`BufferedWriter bw = new BufferedWriter(new FileWriter(path))` Essa linha cria um novo arquivo no caminho especificado por `path`. Se o arquivo já existir, ele será sobrescrito. Agora se adicionar `true` como segundo parâmetro em `FileWriter`, o conteúdo será adicionado ao final do arquivo existente. Dessa forma:
+
+```Java
+BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))
+```
+
+### Listar pastas de um diretório
+
+```Java
+        System.out.println("Enter a folder path: ");
+        String strPath = sc.nextLine();
+
+        File path = new File(strPath);
+
+        File[] folders = path.listFiles(File::isDirectory);
+        System.out.println("Folders: ");
+
+        for (File folder : folders) {
+            System.out.println(folder);
+        }
+```
+
+### Listar arquivos de um diretório
+
+```Java
+        System.out.println("Enter a folder path: ");
+        String strPath = sc.nextLine();
+
+        File[] files = path.listFiles(File::isFile);
+        System.out.println("Files: ");
+
+        for (File file : files) {
+            System.out.println(file);
+        }
+```
+
+### Criar uma pasta
+
+```Java
+        boolean sucess = new File(strPath + "\\subdir").mkdir();
+        System.out.println("Folder created: " + sucess);
+```
+
+### Outros comandos úteis com arquivos
+
+```Java
+        System.out.println("GetName: " + path.getName()); // Nome do arquivo ou pasta
+        System.out.println("GetParent: " + path.getParent()); // Caminho do diretório pai
+        System.out.println("GetPath: " + path.getPath()); // Caminho completo do arquivo ou pasta
 ```
