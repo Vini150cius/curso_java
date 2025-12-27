@@ -1,4 +1,4 @@
-# Java - Conceitos Basicos
+# Java - Conceitos Básicos
 
 ## Introdução ao Java
 
@@ -11,9 +11,9 @@ modulo = agrupamento lógico de pacotes relacionados.
 runtime = agrupamento físico (arquivos).
 aplicação = conjunto de módulos relacionados.
 
-## Codigos Java Basicos
+## Códigos Java Básicos
 
-sysout = atalho para System.out.print
+`sysout` = atalho para `System.out.println();``
 
 Exemplo de código Java:
 `System.out.print("Olá mundo!");`
@@ -893,4 +893,94 @@ BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))
         System.out.println("GetName: " + path.getName()); // Nome do arquivo ou pasta
         System.out.println("GetParent: " + path.getParent()); // Caminho do diretório pai
         System.out.println("GetPath: " + path.getPath()); // Caminho completo do arquivo ou pasta
+```
+
+## Interfaces
+
+Exercício de Interfaces é o 024.
+
+Interfaces são contratos que definem um conjunto de métodos que uma classe deve implementar. Elas permitem a criação de código mais flexível e reutilizável.
+
+Voce faz um codigo onde consoma a interface e depois cria classes que implementam essa interface. Assim você pode trocar as implementações sem alterar o código que consome a interface, por exemplo, em um sistema de pagamento onde você pode ter diferentes métodos de pagamento (cartão de crédito, PayPal, boleto bancário), você pode definir uma interface `PaymentMethod` com um método `processPayment()`. Cada método de pagamento pode ser implementado em uma classe separada que implementa a interface `PaymentMethod`. Ou uma interface que tenha o banco de dados e depois você pode colocar qualquer banco de dados que implemente essa interface.
+
+```Java
+public interface TaxService {
+    double tax(double amount);
+}
+
+```
+
+```Java
+public class BrazilTaxService implements TaxService {
+    public double tax(double amount) {
+    // Regras de negócio
+    }
+}
+```
+
+```Java
+public class RentalService {
+    private Double pricePerHour;
+    private Double pricePerDay;
+
+    private TaxService taxService; // Onde vc iria usar a class diretamente, vc agora usa a interface
+
+    // Construtor e outros métodos
+}
+```
+
+## Problema do Diamante
+
+Esse problema acontece quando há uma ambiguidade na herança múltipla, onde uma classe herda de duas classes que possuem um método com o mesmo nome. Por isso a herança múltipla de classes não é permitida em Java.
+ 
+ Uma classe pode implementar múltiplas interfaces, o que permite que uma classe reutilize código de várias fontes sem enfrentar o problema do diamante.
+
+```Java
+public interface A {
+    void method();
+}
+public interface B extends A {
+    void method();
+}
+public class C implements B, C {
+    public void method() {
+    }
+}
+```
+
+## Classe ComparableTo
+Uma classe que implementa a interface Comparable deve sobrescrever o método compareTo, que é usado para comparar.O método compareTo deve retornar um valor negativo se o objeto atual for menor que o outro objeto, um valor positivo se for maior, e zero se forem iguais.
+
+```Java
+public class Product implements Comparable<Product> {
+    @Override
+    public int compareTo(Product other) {
+        return this.price.compareTo(other.getPrice());
+    }
+}
+```
+
+## Interface Comparable
+
+```Java
+public interface Comparable<T> {
+    int compareTo(T o);
+}
+```
+
+## Collections
+
+Collections.sort(nomeDaLista);
+Essa função ordena a lista em ordem crescente, desde que o tipo da lista implemente a interface Comparable.
+
+## Default Methods / Defender methods em Interfaces
+
+São metodos que ficam dentro da interface, mas que possuem uma implementação padrão. Assim, o metodo não ira ter que ser sobrescrito nas classes que implementam a interface.
+
+```Java
+public interface MyInterface {
+    default void myDefaultMethod() {
+        System.out.println("This is a default method.");
+    }
+}
 ```
