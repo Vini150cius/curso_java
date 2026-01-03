@@ -932,8 +932,8 @@ public class RentalService {
 ## Problema do Diamante
 
 Esse problema acontece quando há uma ambiguidade na herança múltipla, onde uma classe herda de duas classes que possuem um método com o mesmo nome. Por isso a herança múltipla de classes não é permitida em Java.
- 
- Uma classe pode implementar múltiplas interfaces, o que permite que uma classe reutilize código de várias fontes sem enfrentar o problema do diamante.
+
+Uma classe pode implementar múltiplas interfaces, o que permite que uma classe reutilize código de várias fontes sem enfrentar o problema do diamante.
 
 ```Java
 public interface A {
@@ -949,6 +949,7 @@ public class C implements B, C {
 ```
 
 ## Classe ComparableTo
+
 Uma classe que implementa a interface Comparable deve sobrescrever o método compareTo, que é usado para comparar.O método compareTo deve retornar um valor negativo se o objeto atual for menor que o outro objeto, um valor positivo se for maior, e zero se forem iguais.
 
 ```Java
@@ -983,4 +984,394 @@ public interface MyInterface {
         System.out.println("This is a default method.");
     }
 }
+```
+
+## Generics
+
+Serve para criar classes que funcionam com diferentes tipos de dados, na classe você define um tipo genérico usando `<T>`, e na instanciação da classe, você especifica o tipo que deseja usar.
+
+```Java
+public class Services<T> {
+    private List<T> list = new ArrayList<>();
+
+    public void setItem(T item) {    }
+
+    public T getItem() {    }
+}
+```
+
+```Java
+Box<String> stringBox = new Box<>();
+```
+
+## Tipos Coringa
+
+Tipos coringa (wildcard types) em Java são usados em generics. Eles são representados pelo símbolo `?` e podem ser usados para indicar que um tipo genérico pode ser qualquer tipo.
+Mas tem algumas restrições, por exemplo, você não pode adicionar elementos.
+
+### Coringa delimitados
+
+Caso você queira alguma lista que as informações sejam de um tipo específico ou subtipos, você pode usar o coringa delimitado com `extends`.
+
+```Java
+List<? extends Shape> list = new ArrayList<>();
+```
+
+No exemplo acima, a lista pode conter objetos do tipo Shape ou qualquer subtipo de Shape, como Circle ou Rectangle.
+
+## Covariância e Contravariância
+
+Covariância permite que você use um tipo mais específico do que o tipo genérico declarado. Contravariância permite que você use um tipo mais genérico do que o tipo genérico declarado.
+
+### Covariância
+
+Pode fazer o get, mas não o put.
+
+```Java
+List<Integer> intList = new ArrayList<Integer>();
+intList.add(10);
+intList.add(5);
+List<? extends Number> list = intList;
+Number x = list.get(0);
+list.add(20); // erro de compilacao
+```
+
+### Contravariância
+
+Pode fazer o put, mas não o get.
+
+```Java
+List<Object> myObjs = new ArrayList<Object>();
+myObjs.add("Maria");
+myObjs.add("Alex");
+List<? super Number> myNums = myObjs;
+myNums.add(10);
+myNums.add(3.14);
+Number x = myNums.get(0); // erro de compilacao
+```
+
+### Método de copia de listas
+
+Abaixo um exemplo de método que copia elementos de uma lista para outra, utilizando tipos coringa delimitados para permitir a cópia de listas de diferentes tipos numéricos. Assim, podemos montar uma lista com dois tipos diferentes de números (Integer e Double).
+Tambem temos um método para imprimir a lista, utilizando o coringa simples `?`, que permite imprimir listas de qualquer tipo.
+
+```Java
+    public static void main(String[] args) {
+
+        List<Integer> myInts = Arrays.asList(1, 2, 3, 4);
+        List<Double> myDoubles = Arrays.asList(3.14, 6.28);
+        List<Object> myObjs = new ArrayList<Object>();
+
+        copy(myInts, myObjs);
+        printList(myObjs);
+        copy(myDoubles, myObjs);
+        printList(myObjs);
+
+    }
+
+    public static void copy(List<? extends Number> source, List<? super Number> destiny) {
+        for (Number number : source) {
+            destiny.add(number);
+        }
+    }
+
+    public static void printList(List<?> list) {
+        for (Object obj : list) {
+            System.out.print(obj + " ");
+        }
+        System.out.println();
+    }
+```
+
+## Equals e HashCode
+
+Os métodos `equals` e `hashCode` são usados para comparar objetos em Java. O método `equals` verifica se dois objetos são iguais, enquanto o método `hashCode` retorna um valor inteiro que representa o objeto.
+O `hashCode` é mais rapido do que o `equals`, por isso é usado o hashCode para fazer uma comparação inicial, e se os hashCodes forem iguais, ai sim é feito o equals para verificar se os objetos são realmente iguais.
+Para criar esses métodos automaticamente no IntelliJ, clique com o botão direito dentro da classe, selecione "Generate" e escolha "equals() and hashCode()". Depois selecione os atributos que você quer considerar na comparação.
+
+## Set
+
+O Set é uma coleção que não permite elementos duplicados. Ele é usado quando você quer garantir que cada elemento seja único dentro da coleção.
+
+### HashSet
+
+O HashSet é uma implementação da interface Set que utiliza uma tabela hash para armazenar os elementos. Ele é o mais rápido, mas não mantém a ordem dos elementos.
+
+```Java
+Set<String> set = new HashSet<>();
+set.add("Maria");
+set.remove("Maria");
+set.removeIf(x -> x.length() > 3);
+```
+
+### TreeSet
+
+Ele é o mais lento, mas mantém os elementos ordenados. Ele é ordenado pelo método compareTo da classe dos objetos armazenados, ou por um Comparator fornecido no momento da criação do TreeSet.
+
+```Java
+Set<String> set = new TreeSet<>();
+set.add("Maria");
+set.add("Alex");
+```
+
+### LinkedHashSet
+
+Mais lento que o HashSet, mas mais rápido que o TreeSet. Mantém a ordem de inserção dos elementos.
+
+```Java
+Set<String> set = new LinkedHashSet<>();
+set.add("Maria");
+set.add("Alex");
+```
+
+### Métodos principais da interface Set
+
+```Java
+add("item") // Adiciona um elemento no conjunto
+remove("item") // Remove um elemento do conjunto
+contains("item") // Verifica se o conjunto contém o elemento
+clear() // Remove todos os elementos do conjunto
+size() // Retorna o número de elementos no conjunto
+removeIf(predicate) // Remove elementos que satisfazem o predicado
+addAll(other) // União: adiciona no conjunto os elementos do outro conjunto, sem repetição
+retainAll(other) // Interseção: remove do conjunto os elementos não contidos em other
+removeAll(other) // Diferença: remove do conjunto os elementos contidos em other
+```
+
+### Contains no Set
+
+O método `contains` no Set usa o `hashCode` e o `equals` para verificar se um elemento está presente no conjunto. Caso seja uma classe personalizada, é importante sobrescrever esses métodos para garantir o funcionamento correto do `contains`.
+
+## Map
+
+O Map é uma coleção que armazena pares de chave-valor. Ele é usado quando você quer associar um valor a uma chave específica. Ele não permite chaves duplicadas, mas permite valores duplicados.
+
+Uso comum: cookies, local storage, qualquer modelo chave-valor
+
+```Java
+Map<Integer, String> map = new HashMap<>();
+map.put(1, "Maria");
+```
+
+### Métodos chave
+
+```Java
+put(chave, valor) // Adiciona um par chave-valor ao mapa
+get(chave) // Retorna o valor associado à chave
+remove(chave) // Remove o par chave-valor do mapa
+containsKey(chave) // Verifica se o mapa contém a chave
+containsValue(valor) // Verifica se o mapa contém o valor
+clear() // Remove todos os pares chave-valor do mapa
+size() // Retorna o número de pares chave-valor no mapa
+keySet() // Retorna um conjunto com todas as chaves do mapa
+values() // Retorna uma coleção com todos os valores do mapa
+
+// forEach
+map.forEach((key, value) -> {
+    System.out.println("Key: " + key + ", Value: " + value);
+});
+
+for (String key : map.keySet()) {
+    System.out.println(key + ", Value: " + map.get(key));
+}
+```
+
+## Comparator
+
+### Classe Comparator
+
+Ao inves de colocar `Collectons.sort(nomeDaLista);`, voce pode criar uma classe que implemente a interface Comparator, e passar essa classe como parametro para o list.sort(). Assim a ordenação sera feita de acordo com o que voce definiu na classe Comparator.
+
+```Java
+    public class MyComparator implements Comparator<Product> {
+        @Override
+        public int compare(Product p1, Product p2) {
+            return p1.getName().toUpperCase().compareTo(p2.getName().toUpperCase());
+        }
+    }
+```
+
+```Java
+    list.sort(new MyComparator());
+```
+
+### Classe Comparator anônima
+
+Podemos também criar a classe Comparator como uma classe anônima, sem a necessidade de criar um arquivo separado para ela.
+
+```Java
+    Comparator<Product> comp = new Comparator<Product>() {
+        @Override
+        public int compare(Product p1, Product p2) {
+            return p1.getName().toUpperCase().compareTo(p2.getName().toUpperCase());
+        }
+    };
+```
+
+```Java
+    list.sort(comp);
+```
+
+### Expressão Lambda como Comparator
+
+Podemos também usar uma expressão lambda para criar o Comparator de forma mais concisa.
+
+```Java
+    Comparator<Product> comp = (p1, p2) -> p1.getName().toUpperCase().compareTo(p2.getName().toUpperCase());
+```
+
+```Java
+    list.sort(comp);
+
+```
+
+### Usando expressão lambda diretamente no sort
+
+```Java
+    list.sort((p1, p2) -> p1.getName().toUpperCase().compareTo(p2.getName().toUpperCase()));
+```
+
+## Expressão Lambda
+
+Expressões lambda são uma forma concisa de representar funções anônimas em Java. Elas são usadas principalmente para implementar interfaces funcionais, que são interfaces com um único método abstrato.
+**Elas basicamente são arrow functions**.
+
+## Programação Imperativa vs Funcional
+
+![Paradigma funcional de programação](imagensReadme/image4.png)
+
+## Interface Funcional
+
+Interfaces funcionais são interfaces que possuem apenas um método abstrato. Elas são usadas como alvos para expressões lambda e referências de método em Java.
+
+### Interface Predicate
+
+A interface Predicate representa uma função que recebe um argumento e retorna um valor booleano. Ela é usada para testar se um objeto satisfaz uma determinada condição.
+
+```Java
+public interface Predicate<T> {
+    boolean test(T t);
+}
+```
+
+Ela pode ser usada dentro de uma classe de serviço para filtrar uma lista de objetos com base em uma condição específica.
+
+```Java
+    public class ProductService implements Predicate<Product> {
+        @Override
+        public boolean test(Product p) {
+            return p.getPrice() >= 100.0;
+        }
+    }
+```
+
+```Java
+    list.removeIf(new ProductService());
+```
+
+Ou pode ser um método estático dentro da classe de serviço.
+
+```Java
+    public class ProductService {
+        public static boolean staticProductPredicate(Product p) {
+            return p.getPrice() >= 100.0;
+        }
+    }
+```
+
+```Java
+    list.removeIf(ProductService::staticProductPredicate);
+```
+
+Ou pode ser uma expressão lambda diretamente no removeIf.
+
+```Java
+    list.removeIf(p -> p.getPrice() >= 100.0);
+```
+
+### Interface Consumer  
+
+Ele tambem pode ser feito de diferentes formas, como uma classe que implementa a interface Consumer, um método estático, ou uma expressão lambda, mas o mais comum é usar a expressão lambda diretamente no forEach.
+
+```Java
+    list.forEach(p -> p.setPrice(p.getPrice() * 1.1));
+```
+
+### Interface Function
+
+```Java
+    list.stream().map(p -> p.getName().toUpperCase()).collect(Collectors.toList());
+```
+
+## Funções que tem outras funções como parâmetros
+
+Você pode criar métodos que recebem funções como parâmetros, usando interfaces funcionais como Predicate, Function, Consumer, etc. Isso permite que você crie métodos mais genéricos e reutilizáveis.
+
+```Java
+    public double filter(List<T> list, Predicate<T> predicate) {
+        double sum = 0.0;
+        for (T item : list) {
+            if (predicate.test(item)) {
+                sum += item.getPrice();
+            }
+        }
+        return sum;
+    }
+```
+
+```Java
+    double sum = ps.filteredSum(products, p -> p.getPrice() >= 100.0);
+```
+
+## Stream
+
+Streams são sequências de elementos que suportam operações funcionais para processamento de dados. Eles permitem que você processe coleções de forma declarativa, usando operações como map, filter, reduce, etc.
+
+### Operações intermediárias
+
+- filter: filtra os elementos com base em uma condição
+- map: aplica uma função a cada elemento, transformando-os
+- flatMap: transforma os elementos em uma stream de outro tipo e "achata" a estrutura
+- peek: permite inspecionar os elementos sem modificá-los
+- distinct: remove elementos duplicados
+- sorted: ordena os elementos
+- skip: pula os primeiros n elementos
+- limit: limita o número de elementos (short-circuiting)
+
+### Operações terminais
+
+- forEach: executa uma ação para cada elemento
+- forEachOrdered: executa uma ação para cada elemento, mantendo a ordem
+- toArray: converte a stream em um array
+- reduce: reduz os elementos a um único valor
+- collect: coleta os elementos em uma coleção
+- min: retorna o menor elemento
+- max: retorna o maior elemento
+- count: conta o número de elementos
+- anyMatch: verifica se algum elemento satisfaz a condição
+- allMatch: verifica se todos os elementos satisfazem a condição
+- noneMatch: verifica se nenhum elemento satisfaz a condição
+- findFirst: retorna o primeiro elemento
+- findAny: retorna qualquer elemento
+
+### Criando uma Stream
+
+```Java
+Stream<T> stream = list.stream(); // Cria uma stream a partir de uma coleção
+Stream<String> stream = Stream.of("Maria", "Alex", "Bob"); // Cria uma stream a partir de valores
+Stream<Integer> stream = Stream.iterate(0, x -> x + 2).limit(10); // Cria uma stream infinita e limita a 10 elementos
+Stream<Double> stream = Stream.generate(() -> Math.random()).limit(5); // Cria uma stream infinita de números aleatórios e limita a 5 elementos
+```
+
+### Exemplos de uso do Stream
+
+```Java
+Strem<Long> fibo = Stream.iterate(new Long[]{0L, 1L}, p -> new Long[]{p[1], p[0] + p[1]}).map(p -> p[0]);
+```
+
+```Java
+List<Integer> newList= list.stream()
+    .filter(x-> x% 2 == 0)
+    .map(x-> x* 10)
+    .collect(Collectors.toList());
 ```
