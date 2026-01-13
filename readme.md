@@ -1289,7 +1289,7 @@ Ou pode ser uma expressão lambda diretamente no removeIf.
     list.removeIf(p -> p.getPrice() >= 100.0);
 ```
 
-### Interface Consumer  
+### Interface Consumer
 
 Ele tambem pode ser feito de diferentes formas, como uma classe que implementa a interface Consumer, um método estático, ou uma expressão lambda, mas o mais comum é usar a expressão lambda diretamente no forEach.
 
@@ -1375,3 +1375,331 @@ List<Integer> newList= list.stream()
     .map(x-> x* 10)
     .collect(Collectors.toList());
 ```
+
+# Java com JDBC
+
+## JDBC
+
+É a sigla para Java Database Connectivity, que é uma API padrão para conectar e interagir com bancos de dados relacionais em Java.
+
+## Adicionando JDBC ao projeto
+
+Para utilizar o JDBC é necessário adicionar alguns arquivos.
+
+1. Adicionar o driver JDBC do banco de dados que você está utilizando (por exemplo, MySQL Connector/J para MySQL).
+
+### Como adicionar o driver JDBC no IntelliJ
+
+1. No IntelliJ, vá para File > Project Structure (ou pressione Ctrl+Alt+Shift+S).
+
+2. Selecione Libraries na barra lateral esquerda.
+
+3. Clique no ícone `+` e selecione Java.
+
+4. Navegue até o arquivo mysql-connector-j-x.x.x.jar que você acabou de baixar e selecione-o.
+
+5. Clique em OK e aplique as alterações.
+
+6. Adicionar um arquivo chamado `db.properties` na pasta raiz do projeto, com as informações de conexão com o banco de dados. Que seria tipo o `.env`.
+
+```properties
+user=dev
+password=1234567
+dburl=jdbc:mysql://localhost:3306/coursejdbc
+useSSL=false
+```
+
+3. Criar um pacote chamado `db` para colocar a classe de conexão com o banco de dados.
+
+4. Criar uma classe chamada `DbException` dentro do pacote `db`, que será responsável por tratar as exceções relacionadas ao banco de dados.
+
+```Java
+public class DbException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
+
+    public DbException(String message) {
+        super(message);
+    }
+}
+```
+
+5. Criar uma classe chamada `DB` dentro do pacote `db`, que será responsável por gerenciar a conexão com o banco de dados.
+
+```Java
+public class DB {
+
+    private static Connection conn = null;
+
+    public static Connection getConnection() {
+        if (conn == null) {
+            try {
+                Properties props = loadProperties();
+                String url = props.getProperty("dburl");
+                conn = DriverManager.getConnection(url, props);
+            } catch (SQLException e) {
+                throw new DbException(e.getMessage());
+            }
+        }
+        return conn;
+    }
+
+    public static void closeConnection() {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                throw new DbException(e.getMessage());
+            }
+        }
+    }
+
+    private static Properties loadProperties() {
+        try (FileInputStream fs = new FileInputStream("db.properties")) {
+            Properties props = new Properties();
+            props.load(fs);
+            return props;
+        } catch (IOException e) {
+            throw new DbException(e.getMessage());
+        }
+    }
+}
+```
+
+## ResultSet e Statement
+
+O Statement é uma interface que representa uma instrução SQL que pode ser executada contra o banco de dados. Ele permite que você execute consultas SQL e atualizações no banco de dados.
+
+O ResultSet é uma interface que representa o resultado de uma consulta SQL. Ele permite que você navegue pelos dados retornados pela consulta e acesse os valores das colunas.
+
+### PreparamentStatement
+
+O PreparedStatement é uma subinterface do Statement que permite que você crie instruções SQL pré-compiladas. Ele é usado para executar consultas SQL com parâmetros, o que ajuda a prevenir ataques de injeção SQL e melhora o desempenho das consultas.
+
+## Consulta - Read - Get
+
+```Java
+Connection conn = null;
+        Statement st = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DB.getConnection();
+            st = conn.createStatement();
+            rs = st.executeQuery("SELECT * FROM department");
+
+            while (rs.next()) {
+                System.out.println(rs.getInt("Id") + ", " + rs.getString("Name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DB.closeResultSet(rs);
+            DB.closeStatement(st);
+            DB.closeConnection();
+        }
+```
+
+## Inserção - Create - Set
+
+```Java
+SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Connection conn = null;
+        PreparedStatement st = null;
+
+        try {
+            conn = DB.getConnection();
+
+            st = conn.prepareStatement(
+                    "INSERT INTO seller "
+                            + "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+                            + "VALUES (?, ?, ?, ?, ?)"
+            );
+            st.setString(1, "Carlos");
+            st.setString(2, "carlos@gmail.com");
+            st.setDate(3, new java.sql.Date(sdf.parse("22/04/1982").getTime()));
+            st.setDouble(4, 3000.00);
+            st.setInt(5, 4);
+
+            int rowsAffected = st.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        finally {
+            DB.closeStatement(st);
+            DB.closeConnection();
+        }
+```
+
+### Inserção mostrando o id gerado
+
+```Java
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Connection conn = null;
+        PreparedStatement st = null;
+
+        try {
+            conn = DB.getConnection();
+
+            st = conn.prepareStatement(
+                    "INSERT INTO seller "
+                            + "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+                            + "VALUES (?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+            st.setString(1, "Carlos");
+            st.setString(2, "carlos@gmail.com");
+            st.setDate(3, new java.sql.Date(sdf.parse("22/04/1982").getTime()));
+            st.setDouble(4, 3000.00);
+            st.setInt(5, 4);
+
+            int rowsAffected = st.executeUpdate();
+
+            if (rowsAffected > 0) {
+                ResultSet rs = st.getGeneratedKeys();
+                while (rs.next()) {
+                    int id = rs.getInt(1);
+                    System.out.println("Done! Id = " + id);
+                }
+                DB.closeResultSet(rs);
+            } else {
+                System.out.println("No rows affected!");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        finally {
+            DB.closeStatement(st);
+            DB.closeConnection();
+        }
+```
+
+## Atualização - Update - Set
+
+```Java
+        Connection conn = null;
+        PreparedStatement st = null;
+
+        try {
+            conn = DB.getConnection();
+
+            st = conn.prepareStatement(
+                    "UPDATE seller "
+                            + "SET BaseSalary = BaseSalary + ? "
+                            + "WHERE (DepartmentId = ?)"
+            );
+            st.setDouble(1, 200);
+            st.setInt(2, 2);
+
+            int rowsAffected = st.executeUpdate();
+
+            System.out.println("Done" + rowsAffected);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DB.closeStatement(st);
+            DB.closeConnection();
+        }
+```
+
+## Deleção - Delete - Remove
+
+```Java
+        Connection conn = null;
+        PreparedStatement st = null;
+
+        try {
+            conn = DB.getConnection();
+
+            st = conn.prepareStatement(
+                    "DELETE FROM seller WHERE "
+                            + "Id = ?"
+            );
+            st.setInt(1, 8);
+
+            int rowsAffected = st.executeUpdate();
+
+            System.out.println("Done! Rows affected: " + rowsAffected);
+        } catch (SQLException e) {
+            throw new DbIntegrityException(e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+            DB.closeConnection();
+        }
+```
+
+### Tratamento de exceção para integridade referencial
+
+Esse é um exemplo de como criar uma exceção personalizada para tratar erros de integridade referencial ao tentar deletar um registro que está sendo referenciado por outro registro no banco de dados. ou seja, quando tem um FK.
+
+```Java
+public class DbIntegrityException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
+
+    public DbIntegrityException(String msg) {
+        super(msg);
+    }
+}
+```
+
+## Transações com JDBC
+
+Transações são usadas para garantir que um conjunto de operações no banco de dados sejam executadas de forma atômica. Ou seja, ou todas as operações são concluídas com sucesso, ou nenhuma delas é aplicada.
+
+```Java
+        Connection conn = null;
+        Statement st = null;
+
+        try {
+            conn = DB.getConnection();
+           conn.setAutoCommit(false); // Desativa o auto-commit, ou seja, as mudanças não serão salvas automaticamente
+
+            st = conn.createStatement();
+
+            int rows1 = st.executeUpdate("UPDATE seller SET BaseSalary = 2090 WHERE DepartmentId = 1");
+
+            if (1 < 2) {
+                throw new SQLException("Erro falso");
+            }
+
+            int rows2 = st.executeUpdate("UPDATE seller SET BaseSalary = 3090 WHERE DepartmentId = 2");
+
+            conn.commit(); // Se tudo der certo, confirma as mudanças no banco de dados
+
+            System.out.println("Done" + rows1 + rows2);
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+                throw new DbException("Transaction rolled back" + e.getMessage());
+            } catch (SQLException e1) {
+                throw new DbException("Error trying to rollback" + e1.getMessage());
+            }
+        } finally {
+            DB.closeStatement(st);
+            DB.closeConnection();
+        }
+```
+
+## No exercício 31 tem a estrutura completa de um projeto com JDBC, DAO e entidades
+
+## Padrão DAO - Data Access Object
+
+O padrão DAO é uma abordagem para separar a lógica de acesso a dados da lógica de negócios em uma aplicação. Ele envolve a criação de classes DAO que encapsulam as operações de banco de dados, como CRUD (Create, Read, Update, Delete).
+Ou seja, é aquele service que eu geralmente faço no RN.
+  
+## Serializable
+
+A interface Serializable em Java é usada para indicar que uma classe pode ser serializada, ou seja, convertida em uma sequência de bytes para armazenamento ou transmissão. Isso é útil quando você deseja salvar o estado de um objeto em um arquivo, enviá-lo pela rede ou armazená-lo em um banco de dados.
+
+# JPA e Hibernate
+
+## JPA
+
+Java Persistence API (JPA) é a especificação padrão da plataforma Java EE (pacote javax.persistence) para mapeamento objeto-relacional e persistência de dados.
+Para trabalhar com JPA é preciso incluir no projeto uma implementação da API (ex: Hibernate).
