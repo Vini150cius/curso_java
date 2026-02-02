@@ -1692,7 +1692,7 @@ Transações são usadas para garantir que um conjunto de operações no banco d
 
 O padrão DAO é uma abordagem para separar a lógica de acesso a dados da lógica de negócios em uma aplicação. Ele envolve a criação de classes DAO que encapsulam as operações de banco de dados, como CRUD (Create, Read, Update, Delete).
 Ou seja, é aquele service que eu geralmente faço no RN.
-  
+
 ## Serializable
 
 A interface Serializable em Java é usada para indicar que uma classe pode ser serializada, ou seja, convertida em uma sequência de bytes para armazenamento ou transmissão. Isso é útil quando você deseja salvar o estado de um objeto em um arquivo, enviá-lo pela rede ou armazená-lo em um banco de dados.
@@ -1703,3 +1703,616 @@ A interface Serializable em Java é usada para indicar que uma classe pode ser s
 
 Java Persistence API (JPA) é a especificação padrão da plataforma Java EE (pacote javax.persistence) para mapeamento objeto-relacional e persistência de dados.
 Para trabalhar com JPA é preciso incluir no projeto uma implementação da API (ex: Hibernate).
+
+# Java | Spring Boot
+
+## Maven
+
+O Maven é um gerenciador de dependências e um sistema de para realizar o building. Ele gerencia as bibliotecas necessárias para o projeto, facilitando a construção, teste e implantação de aplicativos Java.
+Ele seria equivalente ao npm no ecossistema JavaScript.
+
+[Link de instalação](https://maven.apache.org/)
+[Repositório com todas as dependencias](https://mvnrepository.com/)
+
+A maioria das dependências, você pega o código Maven (XML) e adiciona no arquivo `pom.xml` do projeto.
+
+## Spring Boot
+
+O Spring Boot é um framework baseado no Spring que simplifica o processo de criação de aplicativos Java.
+
+Podemos criar um projeto Spring Boot rapidamente utilizando o [Spring Initializr](https://start.spring.io/). Ou também podemos criar o projeto manualmente, no VS Code, apertando `Ctrl + Shift + P` e digitando `Spring Initializr: Generate a Maven Project`, selecionando as opções desejadas.
+
+No Spring Initializr, temos que colocar algumas informações básicas do projeto, como o gerenciador de dependências (Maven), a linguagem (Java), a versão do Spring Boot, o grupo (geralmente o domínio invertido da empresa ou organização, ou seja, `app.vercel.vinicius-porto`), o artefato (nome do projeto), a descrição, o pacote base e a versão do Java.
+
+Também podemos adicionar dependências ao projeto, como estamos vendo como criar uma API REST para a internet, precisamos do Spring Web, assim já temos a dependência necessária para criar controladores REST e o Apache Tomcat, que é o servidor web embutido que executa a aplicação.
+
+[Configuração base usada](https://start.spring.io/#!type=maven-project&language=java&platformVersion=4.0.1&packaging=jar&configurationFileFormat=properties&jvmVersion=17&groupId=app.vercel.vinicius-porto&artifactId=todolist&name=todolist&description=Gerenciador%20de%20tarefas&packageName=app.vercel.vinicius-porto.todolist&dependencies=web)
+
+## Devtools
+
+[Documentação oficial do devtools](https://docs.spring.io/spring-boot/reference/using/devtools.html)
+O Devtools é uma ferramenta que ajuda no desenvolvimento de aplicações Spring Boot, ele adiciona muitas funcionalidades úteis, mas o principal é o hot reload, que permite que as mudanças no código sejam refletidas na aplicação sem precisar reiniciar o servidor manualmente.
+Para adicionar o Devtools ao projeto, precisamos adicionar a seguinte dependência no `pom.xml`:
+
+```xml
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-devtools</artifactId>
+		<optional>true</optional>
+	</dependency>
+```
+
+## Modos de execução
+
+Podemos rodar pelo terminal, na pasta do projeto, com o comando:
+
+```bash
+mvn spring-boot:run
+```
+
+Podemos também rodar pelo VS Code, apertando `F5` ou indo em `Run and Debug` e clicando em `Run`.
+
+### Estrutura do Projeto
+
+Após criar o projeto, teremos o `src` (onde fica o código fonte do projeto) e o `pom.xml` (arquivo de configuração do Maven, onde ficam as dependências do projeto). Também temos a pasta `target`, que é onde o Maven coloca os arquivos compilados do projeto.
+
+Na pasta `src/main/resources`, temos o arquivo `application.properties`, que é onde podemos colocar configurações específicas da aplicação, como a porta do servidor, configurações de banco de dados, entre outras, ou seja, seria equivalente ao arquivo `.env` em projetos JavaScript.
+
+Os arquivos Java que ficam na pasta `src/main/java` e tambem do `test`, são organizados em pastas que seguem a estrutura do grupo definido no Spring Initializr.
+
+## Controller
+
+A pasta com os controllers tem que ficar dentro da pasta do pacote base definido no Spring Initializr, ou seja, na pasta `todolist`.
+Há duas maneiras de criar endpoints em uma aplicação Spring Boot: utilizando a anotação `@Controller` ou a anotação `@RestController`.
+O `@Controller` é usado para criar controladores que retornam views (páginas HTML), enquanto o `@RestController` é usado para criar controladores que retornam dados (geralmente em formato JSON) para APIs RESTful.
+
+### Reelembrando metodos HTTP
+
+- `GET`: Busca uma informação.
+- `POST`: Adiciona uma nova informação/dado.
+- `PUT`: Atualizar um recurso existente no servidor.
+- `DELETE`: Remove um dado.
+- `PATCH`: Atualiza parcialmente uma informação/dado.
+
+### RestController
+
+O controller precisa de uma rota para ser acessado. Podemos definir a rota base do controller utilizando a anotação `@RequestMapping` na classe do controller. E depois, podemos definir os métodos HTTP utilizando as anotações específicas, como `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping` e `@PatchMapping` acima dos métodos.
+
+## Exemplo de um RestController simples
+
+```java
+@RestController
+@RequestMapping("/primeiraRota")
+public class MeuPrimeiroController {
+
+  @GetMapping("/")
+  public String primeiraMensagem() {
+    return "Hello, World!";
+  }
+
+}
+```
+
+## Criando os comandos básicos para uma API RESTful
+
+Podemos criar metodos para um controller que receba parametros, para isso ficar mais organizado, podemos criar uma classe modelo (Model). E o RequestBody serve para definir que os parametros serão passados no corpo da requisição HTTP.
+
+### Exemplo de Model
+
+```java
+@RestController
+@RequestMapping("/users")
+public class UserController {
+  public void create(@RequestBody UserModel user) {
+    System.out.println("Usuário criado: " + user.userName);
+  }
+}
+
+public class UserModel {
+  public String userName;
+  public String name;
+  public String password;
+}
+```
+
+Ao ter o RequestBody definido, já terá os setters para cada propriedade do modelo, mas teremos que criar os getters manualmente, ou utilizar o Lombok para gerar automaticamente.
+
+## Lombok
+
+[Site da Documentação oficial](https://projectlombok.org/)
+O Lombok é uma biblioteca Java que ajuda a reduzir o código repetitivo e desnecessário, como getters, setters, construtores, entre outros.
+
+### Getters e Setters automáticos
+
+Podemos utilizar a anotação `@Data` na classe do modelo para gerar automaticamente os getters e setters para todas as propriedades da classe.
+
+```java
+import lombok.Data;
+@Data
+public class UserModel {
+  private String userName;
+  private String name;
+  private String password;
+}
+```
+
+Se quisermos apenas os getters, podemos utilizar a anotação `@Getter`, e para os setters, a anotação `@Setter`. E podemos inserir essas anotações em propriedades específicas, se não quisermos que todas as propriedades tenham getters e setters.
+
+## Spring Data JPA
+
+[Documentação oficial](https://spring.io/projects/spring-data-jpa)
+O Spring Data JPA é um projeto do Spring que facilita a implementação de bancos de dados.
+
+### H2 Database
+
+[Documentação oficial](https://www.h2database.com/html/main.html)
+O H2 Database é um banco de dados relacional escrito em Java, que pode ser executado em modo embutido ou servidor. Ele é leve e fácil de usar, sendo ideal para desenvolvimento e testes.
+Para ele funcionar, precisamos adicionar a dependência do H2 Database no `pom.xml` e configurar a URL do banco de dados no `application.properties`.
+
+```properties
+# DATASOURCE
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.username=sa
+spring.datasource.password=
+
+# H2 CLIENT
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# JPA, SQL
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.defer-datasource-initialization=true
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+E para acessar o console do H2 Database, podemos acessar a URL `http://localhost:8080/h2-console` no navegador.
+
+### Criando uma entidade
+
+Para criar uma entidade, precisamos criar uma classe modelo e utilizar a anotação `@Entity` na classe. Também precisamos definir a chave primária da entidade utilizando a anotação `@Id` em uma propriedade da classe. E podemos utilizar a anotação `@GeneratedValue` para definir que o valor da chave primária será gerado automaticamente.
+
+Também podemos utilizar a anotação `@Column` para definir propriedades específicas de uma coluna no banco de dados, como o nome da coluna, se ela pode ser nula, se é única, entre outros. Mas isso é opcional, se não utilizarmos a anotação `@Column`, o JPA irá criar a coluna com o nome da propriedade da classe.
+
+```java
+@Data
+@Entity(name = "tb_users")
+public class UserModel {
+
+  @Id
+  @GeneratedValue(generator = "UUID")
+  private UUID id;
+
+  @Column(name = "user_name", nullable = false, unique = true, length = 50)
+  private String userName;
+  private String name;
+  private String password;
+}
+```
+
+### CreatedAt automático
+
+```Java
+  @CreationTimestamp
+  private LocalDateTime createdAt;
+```
+
+### Foreign Key
+
+```Java
+  @ManyToOne
+  @JoinColumn(name = "department_id")
+  private Department department;
+```
+
+```Java
+    @OneToMany(mappedBy = "department")
+    private List<Seller> sellers = new ArrayList<>();
+```
+
+### JsonIgnore
+
+O JsonIgnore é uma anotação da biblioteca Jackson que é usada para ignorar uma propriedade durante a serialização e desserialização de objetos JSON. Isso é útil quando queremos evitar ciclos infinitos ou quando não queremos expor certas informações na API.
+
+```Java
+    @JsonIgnore
+    @OneToMany(mappedBy = "department")
+    private List<Seller> sellers = new ArrayList<>();
+```
+
+## Enum
+
+```Java
+public enum OrderStatus {
+    WAITING_PAYMENT(1),
+    PAID(2),
+    SHIPPED(3),
+    DELIVERED(4),
+    CANCELLED(5);
+
+    private int code;
+    private OrderStatus(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public static OrderStatus valueOf(int code) {
+        for (OrderStatus value : OrderStatus.values()) {
+            if (value.getCode() == code) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException("Invalid OrderStatus code");
+    }
+}
+```
+
+## Interface
+
+As interfaces no Java são usadas para definir contratos que as classes podem implementar. Elas podem conter métodos abstratos (sem implementação) e constantes.
+A interface pode ter o extends do JpaRepository, mas você precisa passar a entidade (classe) e o tipo da chave primária como generics.
+
+```java
+public interface IUserRepository extends JpaRepository<UserModel, UUID> {}
+```
+
+E no controller, podemos injetar a interface utilizando a anotação `@Autowired`, assim podemos utilizar os métodos do JpaRepository para realizar operações no banco de dados.
+
+```java
+@Autowired
+private IUserRepository userRepository;
+```
+
+Assim podemos utilizar métodos como `save()`, `findById()`, `findAll()`, `deleteById()`, entre outros, para realizar operações no banco de dados de forma simples e rápida.
+Mas caso precisemos de um método personalizado, podemos criar um método na interface facilmente.
+
+```java
+UserModel findByUserName(String userName);
+```
+
+## ResponseEntity
+
+É um tipo para os metodos dos controllers que representa toda a resposta HTTP, incluindo o status code, os headers e o corpo da resposta.
+
+O return do metodo pode ser algo como:
+
+```java
+return ResponseEntity.status(HttpStatus.CONFLICT).body("Usuário já existe!");
+
+// ou
+return ResponseEntity.status(409).body("Usuário já existe!");
+```
+
+## Post correto
+
+```Java
+    @PostMapping
+    public ResponseEntity<User> insert(@RequestBody User obj) {
+        obj = service.insert(obj);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).body(obj);
+    }
+```
+
+## Delete correto
+
+```Java
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+```
+
+## Put correto
+
+No service:
+
+```Java
+    public User update(Long id, User obj) {
+        User entity = repository.getReferenceById(id);
+        updateData(entity, obj);
+        return repository.save(entity);
+    }
+
+    private void updateData(User entity, User obj) {
+        entity.setName(obj.getName());
+        entity.setEmail(obj.getEmail());
+        entity.setPhone(obj.getPhone());
+    }
+```
+
+No controller:
+
+```Java
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User obj) {
+        obj = service.update(id, obj);
+        return ResponseEntity.ok().body(obj);
+    }
+```
+
+## Seeding de dados para testes
+
+Podemos criar uma classe de configuração que implemente a interface `CommandLineRunner`, assim o método `run` será executado quando a aplicação iniciar. Podemos usar essa classe para popular o banco de dados com dados de teste.
+
+```Java
+@Configuration
+@Profile("test")
+public class TestConfig implements CommandLineRunner {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Override
+    public void run(String... args) throws Exception {
+        User u1 = new User(null, "Maria Brown", "maria@gmail.com", "988888888", "123456");
+        User u2 = new User(null, "Alex Green", "alex@gmail.com", "977777777", "123456");
+
+        userRepository.saveAll(Arrays.asList(u1,u2));
+    }
+}
+
+```
+
+## Transient
+
+A anotação `@Transient` é usada para indicar que uma propriedade de uma entidade não deve ser persistida no banco de dados. Ou seja, essa propriedade não será mapeada para uma coluna na tabela do banco de dados.
+
+## @ManyToMany
+
+O relacionamento Many-to-Many (muitos-para-muitos) é usado quando uma entidade pode estar associada a várias instâncias de outra entidade, e vice-versa. Por exemplo, um usuário pode ter vários papéis (roles), e um papel pode ser atribuído a vários usuários.
+
+```Java
+  @ManyToMany
+  @JoinTable(name = "tb_user_role",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
+  private Set<Role> roles = new HashSet<>();
+```
+
+## Bcrypt
+
+[Documentação oficial](https://github.com/patrickfav/bcrypt)
+Igual ao bcrypt do Node.js, o Bcrypt é uma biblioteca para hashing de senhas em Java.
+
+```Java
+    var passwordHash = BCrypt.withDefaults().hashToString(12, userModel.getPassword().toCharArray());
+```
+
+### Verificando a senha
+
+Você precisa passar a senha inserida e depois a senha armazenada, ambas em char array para o verifyer do Bcrypt.
+
+```Java
+          var passwordVerify = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
+```
+
+E o `passwordVerify` terá a propriedade `verified`, que será true se a senha estiver correta, ou false se estiver incorreta.
+
+```Java
+          if (!passwordVerify.verified) {
+            response.sendError(401);
+          }
+```
+
+## Filters
+
+Os Filters ficam numa pasta separada chamada `filter` dentro do pacote base do projeto.
+Eles são usados para interceptar requisições HTTP antes que elas cheguem aos controllers, permitindo que possamos realizar ações como autenticação, logging, entre outros.
+
+```Java
+@Component
+public class FilterTaskAuth implements Filter {
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+      throws IOException, ServletException {
+        chain.doFilter(request, response);
+  }
+}
+```
+
+ou também podemos extender a classe `OncePerRequestFilter`, que garante que o filtro será executado apenas uma vez por requisição. (Mais usado e facil de implementar)
+
+```Java
+@Component
+public class FilterTaskAuth extends OncePerRequestFilter {
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
+    filterChain.doFilter(request, response);
+  }
+}
+```
+
+Temos o `filterChain.doFilter(request, response);` que é usado para passar a requisição e a resposta para o próximo filtro na cadeia, ou para o controller, caso não haja mais filtros. Ele é chamado no final de todas as verificações do filtro.
+
+### Filter para autenticação
+
+```Java
+@Component
+public class FilterTaskAuth extends OncePerRequestFilter {
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
+        // Pega o user e a senha
+    var authorization = request.getHeader("Authorization");
+
+    // Remover o "Basic " do começo
+    var authEncoded = authorization.substring("Basic ".length()).trim();
+
+    // Decodificar o Base64
+    byte[] authDecode = Base64.getDecoder().decode(authEncoded);
+
+    // Converter para String
+    var authString = new String(authDecode);
+
+    // Separar user e senha
+    String[] credentials = authString.split(":");
+    String userName = credentials[0];
+    String password = credentials[1];
+
+    System.out.println("user: " + userName);
+    System.out.println("password: " + password);
+    filterChain.doFilter(request, response);
+  }
+}
+```
+
+### Validação de Rota
+
+Colocamos o `if` para verificar se a rota da requisição começa com `/tasks` ou se é a rota `/tasks/`, assim só iremos validar a autenticação para as rotas de tarefas.
+
+Jeito que o curso ensinou:
+
+```Java
+  @Override
+  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
+
+        var servletPath = request.getServletPath();
+        if (servletPath.equals("/tasks/")) {
+          // Validação de autenticação aqui
+        }
+      }
+```
+
+Jeito mais simples de fazer a verificação:
+
+```Java
+    if (request.getRequestURI().startsWith("/tasks")) {
+      // Validação de autenticação aqui
+    }
+```
+
+### Modo correto de inserir algo no BD
+
+### Requisições com ID do usuário
+
+Para pegar o ID do usuário autenticado na requisição, podemos adicionar um atributo na requisição dentro do filtro, assim conseguimos pegar esse atributo nos controllers.
+
+```Java
+  request.setAttribute("idUser", user.getId());
+```
+
+E para recuperar esse atributo no controller, podemos fazer assim:
+
+```Java
+public Model create(@RequestBody Model model, HttpServletRequest request) {
+  request.getAttribute("idUser");
+  }
+```
+
+## Validação de datas
+
+```Java
+var currentDate = LocalDateTime.now();
+if (currentDate.isAfter(taskModel.getStartAt()) || currentDate.isAfter(taskModel.getEndAt())) {
+  return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A data de início ou fim não pode ser no passado.");
+}
+```
+
+## Variável no path
+
+```Java
+    @PutMapping("/{id}")
+    public void update(@RequestBody Model model, HttpServletRequest request, @PathVariable UUID id) {
+    }
+```
+
+## Utils
+
+Podemos criar uma pasta chamada `utils` dentro do pacote base do projeto, para colocar classes utilitárias que podem ser usadas em várias partes do projeto.
+
+### Util para fazer um update parcial
+
+Esse util copia apenas as propriedades não nulas de um objeto para outro, ignorando as propriedades que são nulas.
+
+```Java
+public class Utils {
+
+  public static void copyNonNullProperties(Object source, Object target) {
+    BeanUtils.copyProperties(source, target, getNullPropertyNames(source));
+  }
+
+  public static String[] getNullPropertyNames(Object source) {
+    final BeanWrapper src = new BeanWrapperImpl(source);
+
+    PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+    Set<String> emptyNames = new HashSet<>();
+
+    for (PropertyDescriptor pd : pds) {
+      Object srcValue = src.getPropertyValue(pd.getName());
+      if (srcValue == null) {
+        emptyNames.add(pd.getName());
+      }
+    }
+
+    String[] result = new String[emptyNames.size()];
+    return emptyNames.toArray(result);
+  }
+}
+```
+
+## Verificação de propriedade do usuário
+
+```Java
+        if (!task.getIdUser().equals(idUser)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tarefa não pertence ao usuário.");
+        }
+```
+
+## Inserindo validação em setters
+
+Caso tenha alguma regra de negócio para uma propriedade, podemos inserir essa validação no setter da propriedade, assim toda vez que tentarmos setar um valor para essa propriedade, a validação será feita.
+
+```Java
+    public void setTitle(String title) throws Exception {
+        if(title.length() > 50) {
+            throw new Exception("O título não pode ter mais de 50 caracteres.");
+        }
+        this.title = title;
+    }
+```
+
+### ControllerAdvice
+
+É uma anotação usada para definir uma classe que irá tratar exceções de forma global na aplicação Spring Boot.
+Nesse caso, estamos tratando a exceção `HttpMessageNotReadableException`, que é lançada quando o corpo da requisição HTTP não pode ser lido ou convertido para o objeto esperado.
+
+```Java
+@ControllerAdvice
+public class ExceptionHandlerController {
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMostSpecificCause().getMessage());
+  }
+}
+```
+
+## Deploy
+
+É recomendado construir um `Docker` para fazer o deploy da aplicação em um servidor com as configurações adequadas.
+
+```Dockerfile
+FROM maven:3.8.4-openjdk-17 AS build
+
+WORKDIR /app
+
+COPY . .
+
+RUN mvn clean install -DskipTests
+
+FROM eclipse-temurin:17-jre-alpine
+EXPOSE 8080
+
+COPY --from=build /app/target/todolist-1.0.0.jar app.jar
+
+ENTRYPOINT [ "java", "-jar", "app.jar" ]
+```
