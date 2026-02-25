@@ -1777,6 +1777,7 @@ O `@Controller` é usado para criar controladores que retornam views (páginas H
 ### RestController
 
 O controller precisa de uma rota para ser acessado. Podemos definir a rota base do controller utilizando a anotação `@RequestMapping` na classe do controller. E depois, podemos definir os métodos HTTP utilizando as anotações específicas, como `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping` e `@PatchMapping` acima dos métodos.
+Além dessas notações, também podemos usar a anotação `@RequestMapping` para definir o método HTTP, passando o método como parâmetro, por exemplo: `@RequestMapping(method = RequestMethod.GET)`.
 
 ## Exemplo de um RestController simples
 
@@ -2315,4 +2316,70 @@ EXPOSE 8080
 COPY --from=build /app/target/todolist-1.0.0.jar app.jar
 
 ENTRYPOINT [ "java", "-jar", "app.jar" ]
+```
+
+# SpringBoot + MongoDB
+
+## Instalação do MongoDB
+
+[Link de instalação do Mongo DB](https://www.mongodb.com/try/download/community)
+Após instalar o MongoDB, precisamos iniciar o serviço do MongoDB. Podemos abrir o terminal dentro da pasta bin do MongoDB que fica em program files e executar o comando:
+
+```bash
+mongod
+```
+
+Isso irá iniciar o serviço do MongoDB na porta padrão 27017.
+
+## Projeto spring boot + mongodb
+
+[Link do projeto no initializr](https://start.spring.io/#!type=maven-project&language=java&platformVersion=4.0.2&packaging=jar&configurationFileFormat=properties&jvmVersion=25&groupId=com.viniciusporto&artifactId=workshopmongo&name=workshopmongo&description=Demo%20project%20for%20Spring%20Boot&packageName=com.viniciusporto.workshopmongo&dependencies=web,data-mongodb)
+
+## Instalação do MongoDB no spring boot
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-mongodb</artifactId>
+</dependency>
+```
+
+## @Document
+
+A anotação `@Document` é usada para indicar que uma classe é um documento do MongoDB. Ela é equivalente à anotação `@Entity` do JPA, mas para o MongoDB. Pode definir o nome da coleção com `@Document(collection = "nome_da_colecao")`. Se o nome da coleção não for definido, o Spring Data MongoDB irá usar o nome da classe como nome da coleção.
+
+# DTO Data Transfer Object
+
+O DTO serve para transferir dados entre camadas da aplicação, como entre o controller e o service, ou entre o service e o repository. Ele muitas vezes tem menos propriedades do que a entidade, ou seja, ele é uma representação simplificada da entidade, contendo apenas as informações necessárias para a transferência de dados.
+
+# Query
+
+## Query methods
+
+O Spring Data JPA e o Spring Data MongoDB possuem uma funcionalidade chamada query methods, que permite criar consultas personalizadas apenas definindo o nome do método na interface do repositório. O Spring Data irá interpretar o nome do método e gerar a consulta SQL ou MongoDB correspondente.
+
+Por exemplo, se quisermos buscar um usuário pelo nome, podemos criar um método na interface do repositório com o nome `findByName`, e o Spring Data irá gerar a consulta SQL ou MongoDB para buscar o usuário pelo nome. E também há outras variações, como `findByNameContaining`, `findByNameStartingWith`, `findByNameEndingWith`, entre outros, que permitem criar consultas mais específicas apenas definindo o nome do método.
+
+[Documentação com as variações](https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html)
+
+```Java
+@Repository
+public interface PostRepository extends MongoRepository<Post,String> {
+
+    List<Post> findByTitleContaining(String title);
+}
+```
+
+## @Query
+
+A anotação `@Query` é usada para definir uma consulta personalizada em um método de repositório. Ela pode ser usada para criar consultas mais complexas ou para usar uma sintaxe de consulta diferente da gerada pelos query methods.
+[Documentação oficial](https://www.mongodb.com/pt-br/docs/manual/reference/operator/query/regex/)
+
+```Java
+@Query("{ 'title': { $regex: ?0, $options: 'i' } }")
+    List<Post> searchTitle(String text);
+
+@Query("{ $and: [ { date: {$gte: ?1} }, { date: { $lte: ?2} } , { $or: [ { 'title': { $regex: ?0, $options: 'i' } }, { 'body': { $regex: ?0, $options: 'i' } }, { 'comments.text': { $regex: ?0, $options: 'i' } } ] } ] }")
+    List<Post> fullSearch(String text, Date minDate, Date maxDate);
+    
 ```
